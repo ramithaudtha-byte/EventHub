@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Admin Profile{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-admin">
+    <div class="nav-brand">Admin Panel</div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('manage_events') }}">Manage Events</a></li>
+        <li><a href="{{ url_for('all_registrations') }}">Registrations</a></li>
+        <li><a href="{{ url_for('reports') }}">Reports</a></li>
+        <li><a href="{{ url_for('admin_profile') }}" class="active">Profile</a></li>
+        <li><a href="{{ url_for('admin_logout') }}" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Admin Profile</h1>
+</div>
+
+<div class="profile-card">
+    <div class="profile-avatar">{{ admin.name[0]|upper }}</div>
+    <div class="profile-info">
+        <div class="detail-row"><span class="label">Name:</span> <span>{{ admin.name }}</span></div>
+        <div class="detail-row"><span class="label">Email:</span> <span>{{ admin.email }}</span></div>
+        <div class="detail-row"><span class="label">Role:</span> <span>Administrator</span></div>
+    </div>
+</div>
+{% endblock %}

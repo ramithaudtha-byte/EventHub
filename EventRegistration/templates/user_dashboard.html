@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}User Dashboard - Event Registration{% endblock %}
+
+{% block navbar %}
+<nav class="navbar">
+    <div class="nav-brand">Event Registration</div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('user_dashboard') }}" class="active">Dashboard</a></li>
+        <li><a href="{{ url_for('events') }}">Browse Events</a></li>
+        <li><a href="{{ url_for('my_registrations') }}">My Registrations</a></li>
+        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+        <li><a href="{{ url_for('logout') }}" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Welcome, {{ session.user_name }}</h1>
+    <p>Manage your event registrations</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ total_open }}</div>
+        <div class="stat-label">Available Events</div>
+        <a href="{{ url_for('events') }}" class="stat-link">Browse →</a>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ my_regs }}</div>
+        <div class="stat-label">My Registrations</div>
+        <a href="{{ url_for('my_registrations') }}" class="stat-link">View →</a>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ upcoming }}</div>
+        <div class="stat-label">Upcoming Events</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ completed }}</div>
+        <div class="stat-label">Completed Events</div>
+    </div>
+</div>
+
+<section class="section">
+    <h2>Recent Open Events</h2>
+    {% if recent_events %}
+    <div class="card-grid">
+        {% for e in recent_events %}
+        <div class="event-card">
+            <div class="event-card-header">
+                <span class="badge badge-{{ e.status|lower }}">{{ e.status }}</span>
+                <span class="event-type">{{ e.event_type }}</span>
+            </div>
+            <h3>{{ e.event_name }}</h3>
+            <p class="event-meta">📅 {{ e.event_date }} &nbsp; 📍 {{ e.venue }}</p>
+            <p class="event-desc">{{ e.description[:100] }}{% if e.description|length > 100 %}...{% endif %}</p>
+            <a href="{{ url_for('event_details', event_id=e.id) }}" class="btn btn-sm btn-primary">View Details</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">No open events available right now.</p>
+    {% endif %}
+</section>
+{% endblock %}

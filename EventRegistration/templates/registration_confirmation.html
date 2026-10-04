@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Registration Successful{% endblock %}
+
+{% block navbar %}
+<nav class="navbar">
+    <div class="nav-brand">Event Registration</div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('events') }}">Browse Events</a></li>
+        <li><a href="{{ url_for('my_registrations') }}" class="active">My Registrations</a></li>
+        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+        <li><a href="{{ url_for('logout') }}" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="confirmation-box">
+    <div class="success-icon">✓</div>
+    <h1>Registration Successful</h1>
+    <div class="confirm-details">
+        <div class="detail-row"><span class="label">User Name:</span> <span>{{ session.user_name }}</span></div>
+        <div class="detail-row"><span class="label">Event Name:</span> <span>{{ event.event_name }}</span></div>
+        <div class="detail-row"><span class="label">Event Type:</span> <span>{{ event.event_type }}</span></div>
+        <div class="detail-row"><span class="label">Event Date:</span> <span>{{ event.event_date }}</span></div>
+        <div class="detail-row"><span class="label">Venue:</span> <span>{{ event.venue }}</span></div>
+        {% if registration %}
+        <div class="detail-row"><span class="label">Registered Name:</span> <span>{{ registration.name }}</span></div>
+        {% if registration.team_members %}
+        <div class="detail-row"><span class="label">Team Members:</span> <span>{{ registration.team_members }}</span></div>
+        {% endif %}
+        <div class="detail-row"><span class="label">Registration Date:</span> <span>{{ registration.registration_date }}</span></div>
+        {% endif %}
+    </div>
+    <div class="confirm-actions">
+        <a href="{{ url_for('my_registrations') }}" class="btn btn-primary">My Registrations</a>
+        <a href="{{ url_for('events') }}" class="btn btn-secondary">Browse More Events</a>
+    </div>
+</div>
+{% endblock %}

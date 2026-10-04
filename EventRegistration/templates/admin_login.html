@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Admin Login - Event Registration{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h1>Admin Login</h1>
+        <p class="auth-subtitle">Administrator Access Only</p>
+        <form method="POST" action="{{ url_for('admin_login') }}" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="{{ email or '' }}" required placeholder="Admin email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="Admin password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Login as Admin</button>
+        </form>
+        <p class="auth-link"><a href="{{ url_for('login') }}">User Login</a></p>
+    </div>
+</div>
+{% endblock %}

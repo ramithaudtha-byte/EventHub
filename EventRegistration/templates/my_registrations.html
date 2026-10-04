@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}My Registrations - Event Registration{% endblock %}
+
+{% block navbar %}
+<nav class="navbar">
+    <div class="nav-brand">Event Registration</div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('events') }}">Browse Events</a></li>
+        <li><a href="{{ url_for('my_registrations') }}" class="active">My Registrations</a></li>
+        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+        <li><a href="{{ url_for('logout') }}" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Registrations</h1>
+    <p>View and manage your event registrations</p>
+</div>
+
+{% if registrations %}
+<div class="table-responsive">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Type</th>
+                <th>Event Date</th>
+                <th>Venue</th>
+                <th>Name / Team</th>
+                <th>Registration Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in registrations %}
+            <tr>
+                <td><strong>{{ r.event_name }}</strong></td>
+                <td>{{ r.event_type }}</td>
+                <td>{{ r.event_date }}</td>
+                <td>{{ r.venue }}</td>
+                <td>{{ r.name }}{% if r.team_members %}<br><small style="color:#888">{{ r.team_members }}</small>{% endif %}</td>
+                <td>{{ r.registration_date }}</td>
+                <td><span class="badge badge-{{ r.status|lower }}">{{ r.status }}</span></td>
+                <td>
+                    {% if r.status == 'Registered' %}
+                    <form method="POST" action="{{ url_for('cancel_registration', registration_id=r.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this registration?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
+                    </form>
+                    {% else %}
+                    <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="empty-state">You have no registrations yet. <a href="{{ url_for('events') }}">Browse events</a> to register.</p>
+{% endif %}
+{% endblock %}

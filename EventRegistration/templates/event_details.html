@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ event.event_name }} - Event Details{% endblock %}
+
+{% block navbar %}
+<nav class="navbar">
+    <div class="nav-brand">EventHub</div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('events') }}" class="active">Browse Events</a></li>
+        <li><a href="{{ url_for('my_registrations') }}">My Registrations</a></li>
+        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+        <li><a href="{{ url_for('logout') }}" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{{ url_for('events') }}" class="back-link">← Back to Events</a>
+    <h1>{{ event.event_name }}</h1>
+    <span class="badge badge-{{ event.status|lower }}">{{ event.status }}</span>
+</div>
+
+<div class="detail-grid">
+    <div class="detail-card">
+        <h2>Event Information</h2>
+        <div class="detail-row"><span class="label">Type:</span> <span>{{ event.event_type }}</span></div>
+        <div class="detail-row"><span class="label">Date:</span> <span>{{ event.event_date }}</span></div>
+        <div class="detail-row"><span class="label">Registration Deadline:</span> <span>{{ event.registration_deadline }}</span></div>
+        <div class="detail-row"><span class="label">Venue:</span> <span>{{ event.venue }}</span></div>
+        <div class="detail-row"><span class="label">Capacity:</span> <span>{{ event.capacity }}</span></div>
+        <div class="detail-row"><span class="label">Team Size:</span> <span>{% if team_size > 1 %}{{ team_size }} members{% else %}Individual{% endif %}</span></div>
+        <div class="detail-row"><span class="label">Registered Seats:</span> <span>{{ registered }}</span></div>
+        <div class="detail-row"><span class="label">Available Seats:</span> <span class="{% if available <= 0 %}text-danger{% else %}text-success{% endif %}">{{ available }}</span></div>
+        <div class="detail-desc">
+            <span class="label">Description:</span>
+            <p>{{ event.description }}</p>
+        </div>
+    </div>
+
+    <div class="detail-card action-card">
+        <h2>Registration</h2>
+        {% if already_registered %}
+            <div class="alert alert-info">You are already registered for this event.</div>
+            <a href="{{ url_for('my_registrations') }}" class="btn btn-secondary">View My Registrations</a>
+        {% elif is_full %}
+            <div class="alert alert-danger">Event Full — No seats available.</div>
+        {% elif deadline_passed or event.status != 'Open' %}
+            <div class="alert alert-warning">Registration Closed</div>
+        {% elif can_register %}
+            <p>Seats available: <strong>{{ available }}</strong></p>
+            {% if team_size > 1 %}
+            <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.75rem;">
+                This event requires a team of <strong>{{ team_size }}</strong>. Enter each full name (e.g. Rahul Kumar or Rahul K).
+            </p>
+            {% else %}
+            <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.75rem;">
+                Enter your full name (e.g. Udtha Ramitha or Rahul K).
+            </p>
+            {% endif %}
+            <form method="POST" action="{{ url_for('register_event', event_id=event.id) }}" onsubmit="return confirm('Confirm registration for this event?');">
+                <div class="form-group">
+                    <label for="lead_name">Your Full Name *</label>
+                    <input type="text" id="lead_name" name="lead_name" value="{{ session.user_name }}" required placeholder="e.g. Udtha Ramitha">
+                </div>
+                {% if team_size > 1 %}
+                    {% for i in range(2, team_size + 1) %}
+                    <div class="form-group">
+                        <label for="team_member_{{ i }}">Team Member {{ i }} (Full Name) *</label>
+                        <input type="text" id="team_member_{{ i }}" name="team_member_{{ i }}" required placeholder="e.g. Priya Sharma">
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                <button type="submit" class="btn btn-primary btn-block">Register Now</button>
+            </form>
+        {% else %}
+            <div class="alert alert-warning">Registration not available.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

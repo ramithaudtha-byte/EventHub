@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Profile - Event Registration{% endblock %}
+
+{% block navbar %}
+<nav class="navbar">
+    <div class="nav-brand">Event Registration</div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('events') }}">Browse Events</a></li>
+        <li><a href="{{ url_for('my_registrations') }}">My Registrations</a></li>
+        <li><a href="{{ url_for('profile') }}" class="active">Profile</a></li>
+        <li><a href="{{ url_for('logout') }}" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Profile</h1>
+</div>
+
+<div class="profile-card">
+    <div class="profile-avatar">{{ user.name[0]|upper }}</div>
+    <div class="profile-info">
+        <div class="detail-row"><span class="label">Name:</span> <span>{{ user.name }}</span></div>
+        <div class="detail-row"><span class="label">Email:</span> <span>{{ user.email }}</span></div>
+        <div class="detail-row"><span class="label">Phone:</span> <span>{{ user.phone or 'N/A' }}</span></div>
+        <div class="detail-row"><span class="label">Member Since:</span> <span>{{ user.created_at }}</span></div>
+        <div class="detail-row"><span class="label">Active Registrations:</span> <span>{{ reg_count }}</span></div>
+    </div>
+</div>
+{% endblock %}

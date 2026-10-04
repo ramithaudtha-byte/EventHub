@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Manage Events - Admin{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-admin">
+    <div class="nav-brand">Admin Panel</div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('manage_events') }}" class="active">Manage Events</a></li>
+        <li><a href="{{ url_for('all_registrations') }}">Registrations</a></li>
+        <li><a href="{{ url_for('reports') }}">Reports</a></li>
+        <li><a href="{{ url_for('admin_profile') }}">Profile</a></li>
+        <li><a href="{{ url_for('admin_logout') }}" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Manage Events</h1>
+    <a href="{{ url_for('add_event') }}" class="btn btn-primary">+ Add Event</a>
+</div>
+
+<div class="filter-bar">
+    <form method="GET" action="{{ url_for('manage_events') }}" class="filter-form">
+        <input type="text" name="search" value="{{ search }}" placeholder="Search events..." class="search-input">
+        <select name="type" class="filter-select">
+            <option value="All" {% if selected_type == 'All' %}selected{% endif %}>All Types</option>
+            {% for t in event_types %}
+            <option value="{{ t }}" {% if selected_type == t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+        </select>
+        <select name="status" class="filter-select">
+            <option value="All" {% if selected_status == 'All' %}selected{% endif %}>All Status</option>
+            <option value="Open" {% if selected_status == 'Open' %}selected{% endif %}>Open</option>
+            <option value="Closed" {% if selected_status == 'Closed' %}selected{% endif %}>Closed</option>
+            <option value="Expired" {% if selected_status == 'Expired' %}selected{% endif %}>Expired</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="{{ url_for('manage_events') }}" class="btn btn-secondary">Reset</a>
+    </form>
+</div>
+
+{% if events %}
+<div class="table-responsive">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Event Name</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Deadline</th>
+                <th>Venue</th>
+                <th>Capacity</th>
+                <th>Team</th>
+                <th>Registered</th>
+                <th>Available</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in events %}
+            <tr>
+                <td>{{ e.id }}</td>
+                <td><strong>{{ e.event_name }}</strong></td>
+                <td>{{ e.event_type }}</td>
+                <td>{{ e.event_date }}</td>
+                <td>{{ e.registration_deadline }}</td>
+                <td>{{ e.venue }}</td>
+                <td>{{ e.capacity }}</td>
+                <td>{% if e.team_size and e.team_size > 1 %}{{ e.team_size }}{% else %}1{% endif %}</td>
+                <td>{{ e.registered }}</td>
+                <td>{{ e.available }}</td>
+                <td><span class="badge badge-{{ e.status|lower }}">{{ e.status }}</span></td>
+                <td class="actions-cell">
+                    <a href="{{ url_for('edit_event', event_id=e.id) }}" class="btn btn-sm btn-secondary">Edit</a>
+                    {% if e.status == 'Open' %}
+                    <form method="POST" action="{{ url_for('close_event', event_id=e.id) }}" style="display:inline;" onsubmit="return confirm('Close this event?');">
+                        <button type="submit" class="btn btn-sm btn-warning">Close</button>
+                    </form>
+                    {% endif %}
+                    <form method="POST" action="{{ url_for('delete_event', event_id=e.id) }}" style="display:inline;" onsubmit="return confirm('Delete this event? This cannot be undone if no registrations exist.');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="empty-state">No events found. <a href="{{ url_for('add_event') }}">Add one</a>.</p>
+{% endif %}
+{% endblock %}

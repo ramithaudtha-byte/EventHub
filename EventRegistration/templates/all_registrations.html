@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}All Registrations - Admin{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-admin">
+    <div class="nav-brand">Admin Panel</div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('manage_events') }}">Manage Events</a></li>
+        <li><a href="{{ url_for('all_registrations') }}" class="active">Registrations</a></li>
+        <li><a href="{{ url_for('reports') }}">Reports</a></li>
+        <li><a href="{{ url_for('admin_profile') }}">Profile</a></li>
+        <li><a href="{{ url_for('admin_logout') }}" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>All Registrations</h1>
+</div>
+
+<div class="filter-bar">
+    <form method="GET" action="{{ url_for('all_registrations') }}" class="filter-form">
+        <input type="text" name="search" value="{{ search }}" placeholder="Search name, email, event, phone..." class="search-input">
+        <select name="status" class="filter-select">
+            <option value="All" {% if selected_status == 'All' %}selected{% endif %}>All Status</option>
+            <option value="Registered" {% if selected_status == 'Registered' %}selected{% endif %}>Registered</option>
+            <option value="Cancelled" {% if selected_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+        </select>
+        <select name="type" class="filter-select">
+            <option value="All" {% if selected_type == 'All' %}selected{% endif %}>All Types</option>
+            {% for t in event_types %}
+            <option value="{{ t }}" {% if selected_type == t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="{{ url_for('all_registrations') }}" class="btn btn-secondary">Reset</a>
+    </form>
+</div>
+
+{% if registrations %}
+<div class="table-responsive">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User Name / Team</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Event Name</th>
+                <th>Type</th>
+                <th>Event Date</th>
+                <th>Reg. Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in registrations %}
+            <tr>
+                <td>{{ r.id }}</td>
+                <td>{{ r.name }}{% if r.team_members %}<br><small style="color:#888">{{ r.team_members }}</small>{% endif %}</td>
+                <td>{{ r.email }}</td>
+                <td>{{ r.phone or 'N/A' }}</td>
+                <td>{{ r.event_name }}</td>
+                <td>{{ r.event_type }}</td>
+                <td>{{ r.event_date }}</td>
+                <td>{{ r.registration_date }}</td>
+                <td><span class="badge badge-{{ r.status|lower }}">{{ r.status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="empty-state">No registrations found.</p>
+{% endif %}
+{% endblock %}

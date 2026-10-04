@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}Reports & Statistics - Admin{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-admin">
+    <div class="nav-brand">Admin Panel</div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('manage_events') }}">Manage Events</a></li>
+        <li><a href="{{ url_for('all_registrations') }}">Registrations</a></li>
+        <li><a href="{{ url_for('reports') }}" class="active">Reports</a></li>
+        <li><a href="{{ url_for('admin_profile') }}">Profile</a></li>
+        <li><a href="{{ url_for('admin_logout') }}" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Reports & Statistics</h1>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ total_users }}</div>
+        <div class="stat-label">Total Users</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ total_events }}</div>
+        <div class="stat-label">Total Events</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ total_regs }}</div>
+        <div class="stat-label">Total Registrations</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ open_events }}</div>
+        <div class="stat-label">Open Events</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ closed_events }}</div>
+        <div class="stat-label">Closed Events</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ expired_events }}</div>
+        <div class="stat-label">Expired Events</div>
+    </div>
+</div>
+
+<section class="section">
+    <h2>Registrations by Event Type</h2>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Event Type</th>
+                    <th>Registrations</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in regs_by_type %}
+                <tr>
+                    <td>{{ item.type }}</td>
+                    <td>{{ item.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="section">
+    <h2>Registrations by Event</h2>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Registrations</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in regs_by_event %}
+                <tr>
+                    <td>{{ e.event_name }}</td>
+                    <td>{{ e.event_type }}</td>
+                    <td>{{ e.event_date }}</td>
+                    <td>{{ e.reg_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="section">
+    <h2>Most Popular Events</h2>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Registrations</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in popular %}
+                <tr>
+                    <td>{{ e.event_name }}</td>
+                    <td>{{ e.event_type }}</td>
+                    <td>{{ e.event_date }}</td>
+                    <td><span class="badge badge-{{ e.status|lower }}">{{ e.status }}</span></td>
+                    <td>{{ e.reg_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="section">
+    <h2>Upcoming Events</h2>
+    {% if upcoming %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Venue</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in upcoming %}
+                <tr>
+                    <td>{{ e.event_name }}</td>
+                    <td>{{ e.event_type }}</td>
+                    <td>{{ e.event_date }}</td>
+                    <td>{{ e.venue }}</td>
+                    <td><span class="badge badge-{{ e.status|lower }}">{{ e.status }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">No upcoming open events.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Add Event - Admin{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-admin">
+    <div class="nav-brand">Admin Panel</div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('manage_events') }}" class="active">Manage Events</a></li>
+        <li><a href="{{ url_for('all_registrations') }}">Registrations</a></li>
+        <li><a href="{{ url_for('reports') }}">Reports</a></li>
+        <li><a href="{{ url_for('admin_profile') }}">Profile</a></li>
+        <li><a href="{{ url_for('admin_logout') }}" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{{ url_for('manage_events') }}" class="back-link">← Back to Events</a>
+    <h1>Add New Event</h1>
+</div>
+
+<div class="form-card">
+    <form method="POST" action="{{ url_for('add_event') }}" class="event-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="event_name">Event Name *</label>
+                <input type="text" id="event_name" name="event_name" value="{{ form.get('event_name', '') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="event_type">Event Type *</label>
+                <select id="event_type" name="event_type" required>
+                    <option value="">Select type</option>
+                    {% for t in event_types %}
+                    <option value="{{ t }}" {% if form.get('event_type') == t %}selected{% endif %}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="event_date">Event Date *</label>
+                <input type="date" id="event_date" name="event_date" value="{{ form.get('event_date', '') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="registration_deadline">Registration Deadline *</label>
+                <input type="date" id="registration_deadline" name="registration_deadline" value="{{ form.get('registration_deadline', '') }}" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="venue">Venue *</label>
+                <input type="text" id="venue" name="venue" value="{{ form.get('venue', '') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="capacity">Capacity *</label>
+                <input type="number" id="capacity" name="capacity" value="{{ form.get('capacity', '100') }}" min="1" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="team_size">Team Size *</label>
+                <input type="number" id="team_size" name="team_size" value="{{ form.get('team_size', '1') }}" min="1" max="20" required>
+                <small style="color:#888;font-size:0.8rem;">1 = individual registration. Higher values require that many team members.</small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description">Description *</label>
+            <textarea id="description" name="description" rows="4" required>{{ form.get('description', '') }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="status">Status *</label>
+            <select id="status" name="status" required>
+                <option value="Open" {% if form.get('status', 'Open') == 'Open' %}selected{% endif %}>Open</option>
+                <option value="Closed" {% if form.get('status') == 'Closed' %}selected{% endif %}>Closed</option>
+                <option value="Expired" {% if form.get('status') == 'Expired' %}selected{% endif %}>Expired</option>
+            </select>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create Event</button>
+            <a href="{{ url_for('manage_events') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

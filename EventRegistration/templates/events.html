@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Browse Events - Event Registration{% endblock %}
+
+{% block navbar %}
+<nav class="navbar">
+    <div class="nav-brand">Event Registration</div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('events') }}" class="active">Browse Events</a></li>
+        <li><a href="{{ url_for('my_registrations') }}">My Registrations</a></li>
+        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+        <li><a href="{{ url_for('logout') }}" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Browse Events</h1>
+    <p>Find and register for upcoming events</p>
+</div>
+
+<div class="filter-bar">
+    <form method="GET" action="{{ url_for('events') }}" class="filter-form">
+        <input type="text" name="search" value="{{ search }}" placeholder="Search by name, type, or venue..." class="search-input">
+        <select name="type" class="filter-select">
+            <option value="All" {% if selected_type == 'All' %}selected{% endif %}>All Types</option>
+            {% for t in event_types %}
+            <option value="{{ t }}" {% if selected_type == t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+        </select>
+        <select name="status" class="filter-select">
+            <option value="All" {% if selected_status == 'All' %}selected{% endif %}>All Status</option>
+            <option value="Open" {% if selected_status == 'Open' %}selected{% endif %}>Open</option>
+            <option value="Closed" {% if selected_status == 'Closed' %}selected{% endif %}>Closed</option>
+            <option value="Expired" {% if selected_status == 'Expired' %}selected{% endif %}>Expired</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="{{ url_for('events') }}" class="btn btn-secondary">Reset</a>
+    </form>
+</div>
+
+{% if events %}
+<div class="table-responsive">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Deadline</th>
+                <th>Venue</th>
+                <th>Seats</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in events %}
+            <tr>
+                <td><strong>{{ e.event_name }}</strong></td>
+                <td>{{ e.event_type }}</td>
+                <td>{{ e.event_date }}</td>
+                <td>{{ e.registration_deadline }}</td>
+                <td>{{ e.venue }}</td>
+                <td>{{ e.available }} / {{ e.capacity }}</td>
+                <td><span class="badge badge-{{ e.status|lower }}">{{ e.status }}</span></td>
+                <td><a href="{{ url_for('event_details', event_id=e.id) }}" class="btn btn-sm btn-primary">Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="empty-state">No events found matching your criteria.</p>
+{% endif %}
+{% endblock %}
